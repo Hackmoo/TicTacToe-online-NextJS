@@ -1,6 +1,7 @@
-export function CrossIcon() {
+export function CrossIcon({classname}) {
   return (
     <svg
+    className={classname}
       width="12"
       height="12"
       viewBox="0 0 12 12"

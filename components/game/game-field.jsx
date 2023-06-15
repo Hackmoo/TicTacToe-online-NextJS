@@ -1,12 +1,10 @@
 import clsx from "clsx";
-import { ZeroIcon } from "./icons/zero-icon";
-import { CrossIcon } from "./icons/cross-icon";
 import { UiButton } from "../uikit/ui-button";
-import { useState } from "react";
+import { GameSymbol } from "./game-symbol";
+import { useGameState } from "./useGameState";
 
 export function GameField({ className }) {
-  const [cells, setCells] = useState(() => new Array(19 * 19).fill(null));
-  const [currentMove, setCurrentMove] = useState();
+  const { cells, currentMove, nextMove, handleCellClick } = useGameState();
   const actions = (
     <>
       <UiButton size={"md"} variant={"primary"}>
@@ -19,20 +17,31 @@ export function GameField({ className }) {
   );
   return (
     <GameFieldLayout className={className}>
-      <GameMoveInfo actions={actions} />
+      <GameMoveInfo
+        actions={actions}
+        currentMove={currentMove}
+        nextMove={nextMove}
+      />
       <GameGrid>
-        {cells.map((_, i) => 
-         <GameCell key={i}></GameCell>
-        )}
-        
+        {cells.map((symbol, i) => (
+          <GameCell
+            key={i}
+            onCLick={() => {
+              handleCellClick(i);
+            }}
+          >
+            {symbol && <GameSymbol symbol={symbol} classname="w-5 h-5" />}
+          </GameCell>
+        ))}
       </GameGrid>
     </GameFieldLayout>
   );
 }
 
-function GameCell({ children }) {
+function GameCell({ children, onCLick }) {
   return (
     <button
+      onClick={onCLick}
       className="border border-slate-200 -ml-px -mt-px flex items-center justify-center"
     >
       {children}
@@ -53,15 +62,15 @@ function GameFieldLayout({ children, className }) {
   );
 }
 
-function GameMoveInfo({ actions }) {
+function GameMoveInfo({ actions, currentMove, nextMove }) {
   return (
     <div className="flex gap-3 items-center">
       <div className="mr-auto">
         <div className="flex gap-1 items-center text-xl leading-tight font-semibold">
-          Ход: <ZeroIcon className="w-5 h-5" />
+          Ход: <GameSymbol symbol={currentMove} classname="w-5 h-5" />
         </div>
         <div className="flex gap-1 items-center text-xs leading-tight text-slate-400">
-          Следующий: <CrossIcon />{" "}
+          Следующий: <GameSymbol symbol={nextMove} classname="w-3 h-3" />
         </div>
       </div>
       {actions}
