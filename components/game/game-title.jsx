@@ -4,7 +4,7 @@ import { StarIcon } from './icons/star-icon'
 import { TimerIcon } from './icons/timer-icon'
 import { UserIcon } from './icons/user-icon'
 
-export function GameTitle() {
+export function GameTitle({playersAmount}) {
   return (
     <div className="pl-2">
       <Link href={"#"} className="flex items-center gap-2 text-xs text-teal-600 leading-tight -mb-0.5">
@@ -15,7 +15,7 @@ export function GameTitle() {
         <div className="flex items-center gap-3 text-xs text-slate-400">
           <StarIcon />
           <div className="flex items-center gap-1">
-            <UserIcon/> 2
+            <UserIcon/> {playersAmount}
           </div>
           <div className="flex items-center gap-1">
             <TimerIcon/> 1 мин на ход
