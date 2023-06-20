@@ -38,7 +38,7 @@ const players = [
   },
 ];
 
-export function GameInfo({ className, playersAmount, currentMove }) {
+export function GameInfo({ className, playersAmount, currentMove, isWinner, onPlayerTimeIsUp }) {
   return (
     <div
       className={clsx(
@@ -52,7 +52,8 @@ export function GameInfo({ className, playersAmount, currentMove }) {
             key={el.id}
             playerInfo={el}
             isRight={i % 2 === 1}
-            isTimerRunning={currentMove === el.symbol}
+            isTimerRunning={currentMove === el.symbol && !isWinner}
+            onTimeIsUp={() => onPlayerTimeIsUp(el.symbol)}
           />
         );
       })}
@@ -60,7 +61,12 @@ export function GameInfo({ className, playersAmount, currentMove }) {
   );
 }
 
-function PlayerInfo({ playerInfo, isRight, isTimerRunning }) {
+function PlayerInfo({
+  playerInfo,
+  isRight,
+  isTimerRunning,
+  onTimeIsUp,
+}) {
   const [seconds, setSeconds] = useState(60);
 
   const minutesString = String(Math.floor(seconds / 60)).padStart(2, "0");
@@ -73,18 +79,25 @@ function PlayerInfo({ playerInfo, isRight, isTimerRunning }) {
         setSeconds((el) => Math.max(el - 1, 0));
       }, 1000);
       return () => {
-        clearInterval(interval)
-        setSeconds(60)
-      }
+        clearInterval(interval);
+        setSeconds(60);
+      };
     }
   }, [isTimerRunning]);
 
-  const getTimerColor = () => {
-    if (isTimerRunning){
-      return isDanger ? "text-orange-600" : "text-slate-900"
+  useEffect(() => {
+    if (seconds === 0) {
+      onTimeIsUp();
     }
-    return 'text-slate-200'
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seconds]);
+
+  const getTimerColor = () => {
+    if (isTimerRunning) {
+      return isDanger ? "text-orange-600" : "text-slate-900";
+    }
+    return "text-slate-200";
+  };
 
   return (
     <div className="flex gap-3 items-center">
